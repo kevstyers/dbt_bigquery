@@ -1,0 +1,47 @@
+
+version: 2
+
+sources:
+  - name: bls
+    database: bigquery-public-data
+    schema: bls
+    tables:
+      - name: unemployment_cps
+        description: BLS CPS monthly series (values often in thousands or percent, depending on series_id).
+        columns:
+          - name: series_id
+            tests:
+              - not_null:
+                  config:
+                    where: "series_id in ('LNU04076975','LNU03076975') and period like 'M__'"
+          - name: year
+            tests:
+              - not_null:
+                  config:
+                    where: "series_id in ('LNU04076975','LNU03076975') and period like 'M__'"
+          - name: period
+            tests:
+              - not_null:
+                  config:
+                    where: "series_id in ('LNU04076975','LNU03076975') and period like 'M__'"
+          - name: value
+            tests:
+              - not_null:
+                  config:
+                    where: "series_id in ('LNU04076975','LNU03076975') and period like 'M__'"
+
+
+models:
+  - name: fct_unemployment_2020   # or whatever your file is named
+    columns:
+      - name: date
+        tests: [not_null]
+      - name: unemployment_rate_pct
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+      - name: unemployment_level_thousands
+        tests: [not_null]        
